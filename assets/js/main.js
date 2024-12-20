@@ -26,11 +26,16 @@ nodoBtnComprar.addEventListener('click', () => {
     const nodoCarrito = document.getElementById('carrito');
     nodoCarrito.innerHTML += htmlOrden;
 
-    //5. Resetear el formulario
 
+    //5. Resetear el formulario
+    setDataRegistroProducto();
 
     //6.Mostrar una alerta informativa
-
+    Swal.fire({
+        title: "Bien Hecho!",
+        text: "Orden registrada correctamente",
+        icon: "success"
+    });
 });
 
 
@@ -193,6 +198,8 @@ const showProducto = ( id ) => {
     return productos.find( ( product ) => product.id == id );
 }
 
+const generarNumeroOrden = () => btoa( Math.random() ).slice(0, 6);
+
 const crearHtmlOrden = ({
     producto,
     cantidad,
@@ -203,7 +210,7 @@ const crearHtmlOrden = ({
     direccion
 }) => {
 
-    const codigo = 4561;
+    const codigo = generarNumeroOrden();
 
     return `
         <div class="col-12" id="${codigo}">
@@ -247,7 +254,7 @@ const crearHtmlOrden = ({
                     </div>
                 </div>
                 <div class="card-footer bg-transparent">
-                    <button class="btn btn-outline-danger">
+                    <button class="btn btn-outline-danger" onclick="eliminarOrden('${codigo}')" >
                         <i class="fa-solid fa-trash-can"></i>
                         Eliminar
                     </button>
@@ -257,3 +264,23 @@ const crearHtmlOrden = ({
     `;
 }
 
+const eliminarOrden = ( codigo ) => {
+    Swal.fire({
+        title: `Estas seguro de eliminar la orden #${codigo}`,
+        text: "La orden será eliminada para siempre!",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById( codigo ).remove();
+            Swal.fire({
+                title: "Bien Hecho!",
+                text: `Orden #${codigo} eliminada correctamente`,
+                icon: "success"
+            });
+        }
+    });
+}
